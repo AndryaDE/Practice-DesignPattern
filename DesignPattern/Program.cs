@@ -1,6 +1,6 @@
 ﻿using System;
-using PoolCreationPatterns;
-using StateBehaviorPatter;
+using Instance.CreationalPattern.Pool;
+using Instance.BehavioralPattern.State;
 
 namespace DesignPattern {
     class Program {
@@ -9,9 +9,9 @@ namespace DesignPattern {
 
             Console.WriteLine("asd");
 
-            //StateBehavioralPatter.Program.Run(); //StateMachine with Questions as States
-            //StateStackBehaviorPatter.Program.Run(); //StateMachine with a StateStack of Questions
-            PoolCreationPatterns.Program.Run(); //StateMachine with a StateStack of Questions
+            //Instance.BehavioralPattern.State.Program.Run(); //StateMachine with Questions as States
+            //Instance.BehavioralPattern.StateStack.Program.Run(); //StateMachine with a StateStack of Questions
+            Instance.CreationalPattern.Pool.Program.Run(); //StateMachine with a StateStack of Questions
 
             //Console.ReadLine();
         }

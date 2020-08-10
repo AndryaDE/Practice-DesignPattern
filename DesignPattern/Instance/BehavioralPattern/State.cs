@@ -2,80 +2,76 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace StateStackBehaviorPatter {
+namespace Instance.BehavioralPattern.State {
 
-    class StackStateMachine { // Wrapper Class and Interface, faced to Client Requests
+    class StateMachine { // Wrapper Class and Interface, faced to Client Requests
         #region Core Mechanic
 
-        private Stack<IState> stateStack = new Stack<IState>(); //alternative: List or Queue
+        private IState currentState;
 
-        public void addState(IState state) {
-            stateStack.Push(state);
-        }
-
-        public void popState() {
-            stateStack.Pop();
+        public void setState(IState state) {
+            currentState = state;
         }
 
         #endregion
         #region Interface
 
-        public void whatIsTheQuestion() => stateStack.Peek().whatIsTheQuestion(this);
-        public void hereIsMyAnswer(string answer) => stateStack.Peek().hereIsMyAnswer(this, answer);
+        public void whatIsTheQuestion() => currentState.whatIsTheQuestion(this);
+        public void hereIsMyAnswer(string answer) => currentState.hereIsMyAnswer(this, answer);
 
         #endregion
     }
 
     interface IState {
-        void whatIsTheQuestion(StackStateMachine statemachine);
-        void hereIsMyAnswer(StackStateMachine stateMachine, string answer);
+        void whatIsTheQuestion(StateMachine statemachine);
+        void hereIsMyAnswer(StateMachine stateMachine, string answer);
     }
 
     class QuestionB : IState {
         private int tries = 4;
-        public void hereIsMyAnswer(StackStateMachine stateMachine, string answer) {
+        public void hereIsMyAnswer(StateMachine stateMachine, string answer) {
             if (answer == "6276,27") {
                 Console.WriteLine("Right!");
-                stateMachine.popState();
+                stateMachine.setState(new QuestionMenu());
             }
             else if (--tries <= 0) {
                 Console.WriteLine("Com'on Man.. Go Away!");
-                stateMachine.popState();
+                stateMachine.setState(new QuestionMenu());
             } else {
                 Console.WriteLine("Wrong! You have " + tries + " trie(s) left.");
             }
         }
 
-        public void whatIsTheQuestion(StackStateMachine statemachine) {
+        public void whatIsTheQuestion(StateMachine statemachine) {
             Console.WriteLine("What is 627 + 1,9 * 3,3 ?");
         }
     }
 
     class QuestionA : IState {
-        public void hereIsMyAnswer(StackStateMachine stateMachine, string answer) {
+        public void hereIsMyAnswer(StateMachine stateMachine, string answer) {
             if (answer == "yes") {
-                stateMachine.popState();
+                stateMachine.setState(new QuestionMenu());
             }
         }
 
-        public void whatIsTheQuestion(StackStateMachine statemachine) {
+        public void whatIsTheQuestion(StateMachine statemachine) {
             Console.WriteLine("Do you want me to stop repeating this question? yes or no");
         }
     }
 
     class QuestionMenu : IState {
-        public void hereIsMyAnswer(StackStateMachine stateMachine, string message) {
+        public void hereIsMyAnswer(StateMachine stateMachine, string message) {
             switch(message.ToLower()) {
                 case "a":
-                    stateMachine.addState(new QuestionA());
+                    stateMachine.setState(new QuestionA());
                     break;
                 case "b":
-                    stateMachine.addState(new QuestionB());
+                    stateMachine.setState(new QuestionB());
                     break;
             }
         }
 
-        public void whatIsTheQuestion(StackStateMachine statemachine) {
+        public void whatIsTheQuestion(StateMachine statemachine) {
             Console.WriteLine("Do you want question A or B?");
         }
     }
@@ -86,8 +82,8 @@ namespace StateStackBehaviorPatter {
         static internal void Run() {
 
             // Initialisation
-            StackStateMachine state = new StackStateMachine();
-            state.addState(new QuestionMenu());
+            StateMachine state = new StateMachine();
+            state.setState(new QuestionMenu());
 
             // Main Loop
             while (true) {
